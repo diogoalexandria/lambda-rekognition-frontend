@@ -16,7 +16,7 @@ export default function Home() {
          
     <React.Fragment>     
         <div className="Home">
-            <small>You are running this app in <b>{ process.env.NODE_ENV }</b></small>                     
+            {process.env.NODE_ENV === "development"?<small>You are running this app in <b>{process.env.NODE_ENV }</b> mode</small>:null}
             <button type="button" className="send-button" onClick={ handleRegisterClick }>Cadastrar</button>            
             <button type="button" className="send-button" onClick={ handleRecognitionClick }>Reconhecer</button>           
         </div>             

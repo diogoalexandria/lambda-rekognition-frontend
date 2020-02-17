@@ -7,11 +7,28 @@ export default function Register() {
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
     });
-    const [nickname, setNickname] = useState('');    
+    const [nickname, setNickname] = useState('');
+    const [repeatedNickname, setRepeatedNickname] = useState(false);
+    
+    function handleRepeatedNickname() {
+        setRepeatedNickname(!repeatedNickname);
+    }
 
-    const sendImageToS3 = (image) => {        
-        const bucketName = 'lambda-talks-face'
-        
+    const promiseWithObjectsInBucket = (params) => {
+        return new Promise((resolve, reject) => {
+            s3.listObjects(params, (err, data) =>  {
+                if(err){
+                    console.log(err, err.stack);
+                    return reject(err);
+                }
+                let array = data.Contents                               
+                return resolve(array)
+            });
+        })
+    }
+
+    const sendImageToS3 = async (image) => {        
+        const bucketName = 'lambda-talks-face';        
         let paramsPutObject = { 
             Body: image,
             Bucket: bucketName,
@@ -20,33 +37,32 @@ export default function Register() {
 
         let paramsListObjects = {
             Bucket: bucketName
-        }
+        };
 
-        let arrayWithObjectsInBucket = s3.listObjects(paramsListObjects, async (err, data) =>  {
-            if(err) console.log(err, err.stack);
-            else { 
-                let array = data.Contents                               
-                return array
+        let arrayWithObjectsInBucket = [];
+        try {
+            arrayWithObjectsInBucket = await promiseWithObjectsInBucket(paramsListObjects);            
+        } catch (err) {
+            console.log(err);
+        }        
+        if (arrayWithObjectsInBucket && arrayWithObjectsInBucket.length > 0) {
+            let elementl            
+            for (let index in arrayWithObjectsInBucket) {
+                                
+                if (nickname.toLowerCase() === arrayWithObjectsInBucket[index].Key.split('.')[0].toLowerCase()) {
+                    handleRepeatedNickname();                    
+                    break;
+                }
             }
-            return err;
-        });
-
-        console.log(arrayWithObjectsInBucket)
-       
-
-        // let sameNickname;
-        // if(arrayWithObjectsInBucket) {
-        //     sameNickname = arrayWithObjectsInBucket.filter( element => {
-        //         return nickname === element.Key.split('.')[0]
-        //     });
-        // } else return
-
-        // if(!sameNickname) {
-        //     s3.putObject(paramsPutObject,(err,data) => {
-        //         if(err) console.log(err, err.stack);
-        //         else console.log(data);
-        //     });
-        // } else console.log("Nickname já existente")        
+        }
+        if(!repeatedNickname) {
+            s3.putObject(paramsPutObject,(err,data) => {
+                if(err) console.log(err, err.stack);
+                else console.log(data);
+            });
+        } else {
+            console.log("Nickname já existente");           
+        }
     }
 
     const webcamRef = React.useRef(null);
@@ -68,10 +84,11 @@ export default function Register() {
             <form onSubmit={handleSubmit}>
                 <label>
                     Nickname:
-                    <input type="text" name="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)}></input>
+                    <input type="text" name="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)}></input>                    
                 </label>
-                <input type="submit" value="Tirar foto"></input>
+                <input type="submit" value="Tirar foto"></input>                
             </form>
+            {repeatedNickname? <span>Nickname já está sendo utilizado</span>:null}
         </div>
     )
 }
