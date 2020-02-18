@@ -46,10 +46,10 @@ export default function Register() {
             console.log(err);
         }        
         if (arrayWithObjectsInBucket && arrayWithObjectsInBucket.length > 0) {
-            let elementl            
+            let element = '';            
             for (let index in arrayWithObjectsInBucket) {
-                                
-                if (nickname.toLowerCase() === arrayWithObjectsInBucket[index].Key.split('.')[0].toLowerCase()) {
+                element = arrayWithObjectsInBucket[index].Key;                                              
+                if (nickname.toLowerCase() === element.split('.')[0].toLowerCase()) {
                     handleRepeatedNickname();                    
                     break;
                 }
