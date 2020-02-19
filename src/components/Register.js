@@ -8,10 +8,10 @@ export default function Register() {
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
     });
     const [nickname, setNickname] = useState('');
-    const [repeatedNickname, setRepeatedNickname] = useState(false);
+    const [formStatus, setFormStatus] = useState('');
     
     function handleRepeatedNickname() {
-        setRepeatedNickname(!repeatedNickname);
+        setFormStatus('repeated nickname');
     }
 
     const promiseWithObjectsInBucket = (params) => {
@@ -55,10 +55,13 @@ export default function Register() {
                 }
             }
         }
-        if(!repeatedNickname) {
+        if(formStatus === 'repeated nickname') {
             s3.putObject(paramsPutObject,(err,data) => {
                 if(err) console.log(err, err.stack);
-                else console.log(data);
+                else {
+                    console.log(data)
+                    setFormStatus('success')
+                };
             });
         } else {
             console.log("Nickname já existente");           
@@ -68,6 +71,7 @@ export default function Register() {
     const webcamRef = React.useRef(null);
 
     const handleSubmit = (event) => {
+        setFormStatus('')
         event.preventDefault();
         const imageSrc = webcamRef.current.getScreenshot();
         console.log(`Base64: ${imageSrc}`)
@@ -79,6 +83,8 @@ export default function Register() {
             <h1>Registro de face</h1>
             <Webcam
                 audio={false}
+                height={480}
+                width={640}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
             />
@@ -89,7 +95,7 @@ export default function Register() {
                 </label>
                 <input type="submit" value="Tirar foto"></input>                
             </form>
-            {repeatedNickname? <span>Nickname já está sendo utilizado</span>:null}
+            <span hidden={!formStatus}>{formStatus}</span>
         </div>
     )
 }

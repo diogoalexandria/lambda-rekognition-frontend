@@ -1,43 +1,69 @@
 import React from 'react';
 import Webcam from 'react-webcam'
-import { S3, Rekognition } from 'aws-sdk';
+import { Rekognition } from 'aws-sdk';
+import {IconButton, Grid, createMuiTheme} from '@material-ui/core'
+import {PhotoCamera} from '@material-ui/icons'
+import {makeStyles} from '@material-ui/styles'
 
 export default function Recognition(){
     const awsCredentials={       
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
     }
-    
-    const s3 = new S3(awsCredentials)
     const rekognition = new Rekognition(awsCredentials)
-
+    
     const webcamRef = React.useRef(null)
-    const rekognizeImage = img => {
-        console.log(img)
-        rekognition.searchFacesByImage()
+    
+    const theme = createMuiTheme()
+    const useStyles = makeStyles({
+        title: {
+            margin: theme.spacing(5)
+        },
+        button: {
+            margin: theme.spacing(3)
+        }
+
+    })
+    
+    const rekognizeImage = params => {
+        return rekognition.searchFacesByImage(params)
     }
 
     const handleSubmit = e => {
         let imgSrc = webcamRef.current.getScreenshot()
-        // var params = {
-        //     CollectionId: "",
-        //     Image: ,
-        //     MaxFaces: 1
-        // }
-        // rekognizeImage({
-        // })
+        var params = {
+            CollectionId: "lambda-talks",
+            Image: imgSrc,
+            MaxFaces: 1
+        }
+        console.log(rekognizeImage(params))
     }
+
+    const classes = useStyles()
     return (
         <React.Fragment>
-            <h1>Recognition</h1>
+            <Grid container 
+                direction="column"
+                justify="center"
+                alignItems="center"
+            >
 
-            <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat='image/jpeg'
-            />
-            <button onClick={handleSubmit}>Tirar Foto</button>
-
+                <Grid item>
+                    <Webcam
+                        audio={false}
+                        width={theme.spacing(65)}
+                        height={theme.spacing(43)}
+                        ref={webcamRef}
+                        screenshotFormat='image/jpeg'
+                        className={classes.webcam}
+                    />
+                </Grid>
+                <Grid item>
+                    <IconButton onClick={handleSubmit} className={classes.button}>
+                        <PhotoCamera/>
+                    </IconButton>
+                </Grid>
+            </Grid>
         </React.Fragment>
     )
 }
