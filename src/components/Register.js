@@ -27,12 +27,23 @@ export default function Register() {
         })
     }
 
-    const sendImageToS3 = async (image) => {        
+    const b64ToBlob = (base64) => {
+        let byteString = atob(base64.split(',')[1]);
+        let arrayBuffer = new ArrayBuffer(byteString.length);
+        let uInt8Array = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < byteString.length; i++){
+            uInt8Array[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([arrayBuffer], {type: 'image/jpeg'})
+    }
+
+    const sendImageToS3 = async (blob) => {        
         const bucketName = 'lambda-talks-face';        
         let paramsPutObject = { 
-            Body: image,
+            Body: blob,
             Bucket: bucketName,
-            Key: `${nickname}`
+            Key: `${nickname}.jpeg`
         };
 
         let paramsListObjects = {
@@ -73,9 +84,9 @@ export default function Register() {
     const handleSubmit = (event) => {
         setFormStatus('')
         event.preventDefault();
-        const imageSrc = webcamRef.current.getScreenshot();
-        console.log(`Base64: ${imageSrc}`)
-        sendImageToS3(imageSrc);
+        const imageSrc = webcamRef.current.getScreenshot();        
+        let blob = b64ToBlob(imageSrc);
+        sendImageToS3(blob);
     }
 
     return (
