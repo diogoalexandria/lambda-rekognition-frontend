@@ -70,6 +70,7 @@ export default function Register() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const imageSrc = webcamRef.current.getScreenshot();
+        console.log(`Base64: ${imageSrc}`)
         sendImageToS3(imageSrc);
     }
 
