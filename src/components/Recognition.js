@@ -21,6 +21,10 @@ export default function Recognition(){
         },
         button: {
             margin: theme.spacing(3)
+        },
+        webcam: {
+            position: 'static',
+            marginTop: '15vh',
         }
 
     })

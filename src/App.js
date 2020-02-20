@@ -11,18 +11,6 @@ import Header from './components/Header'
 
 
 function App() {  
-
-  const useStyles = makeStyles({
-    garagemLogo:{ 
-      width:'12.5vh',
-      height:'15vh',
-    }
-  })
-
-  const classes = useStyles()
-
-  
-
   return (
     <Router>
       <div className="app">

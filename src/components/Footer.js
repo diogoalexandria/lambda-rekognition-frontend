@@ -1,25 +1,20 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/styles'
 import garagemLogo from './../assets/garagem.png'
-import {Grid} from '@material-ui/core'
+import {Grid, AppBar} from '@material-ui/core'
 
 export default function Footer(props){
     const useStyles = makeStyles({
         footer:{
-            width: '100vw',
-            marginRight: 0,
-            padding: 0,
-            backgroundColor: '#000000',
-            position: 'absolute',
-            height: '14vh',
-            left: 0,
-            marginTop: '2vh',
-            top: '84vh',
+            backgroundColor: '#222222',
+            position: 'fixed',
+            top: 'auto',
+            bottom: 0,
+            padding: '1vh',
         },
         garagemLogo: {
-            marginTop: '2vh',
-            width: '37vh',
-            height: '10vh',
+            width: '30vh',
+            height: '8vh',
         },
 
     })
@@ -27,7 +22,7 @@ export default function Footer(props){
     const classes = useStyles()
     return (
         <React.Fragment>
-            <div className={classes.footer}>
+            <AppBar className={classes.footer}>
                 <Grid container
                     direction='row'
                     alignItems='center'
@@ -39,7 +34,7 @@ export default function Footer(props){
                 </Grid>
 
             
-            </div>
+            </AppBar>
         </React.Fragment>
     )
 
