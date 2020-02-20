@@ -41,10 +41,10 @@ export default function Home() {
             <Button variant="contained" color="primary" onClick={ handleRegisterClick }>Cadastrar</Button>
           </Grid>
           <Grid item>
-            <Typography className={classes.typography}>Já tá cadastrado?</Typography>
+            <Typography className={classes.typography}>Já cadastrou?</Typography>
           </Grid>
           <Grid item>
-            <Typography className={classes.typography}>Clique no botão abaixo e seja redirecionado para ser reconhecido</Typography>
+            <Typography className={classes.typography}>Clique no botão abaixo e seja redirecionado para reconhecer</Typography>
           </Grid>            
           <Grid item>
             <Button variant="contained" color="secondary" size="large" onClick={ handleRecognitionClick }>
