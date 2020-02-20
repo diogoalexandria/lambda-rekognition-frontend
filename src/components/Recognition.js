@@ -1,9 +1,9 @@
 import React from 'react';
 import Webcam from 'react-webcam'
 import { Rekognition } from 'aws-sdk';
-import {IconButton, Grid, createMuiTheme} from '@material-ui/core'
-import {PhotoCamera} from '@material-ui/icons'
-import {makeStyles} from '@material-ui/styles'
+import { IconButton, Grid, createMuiTheme } from '@material-ui/core'
+import { PhotoCamera } from '@material-ui/icons'
+import { makeStyles } from '@material-ui/styles'
 
 export default function Recognition(){
     const awsCredentials={       
