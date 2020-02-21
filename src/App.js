@@ -1,14 +1,11 @@
 import './App';
 import React from 'react';
-import Home from './components/Home'
-import Register from './components/Register'
-import Recognition from './components/Recognition'
-import Footer from './components/Footer'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import {makeStyles} from '@material-ui/styles'
-import Header from './components/Header'
-
-
+import Home from './components/Home';
+import Register from './components/Register';
+import Recognition from './components/Recognition';
+import Footer from './components/Footer';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Header from './components/Header';
 
 function App() {  
   return (
@@ -24,6 +21,6 @@ function App() {
       </div>
     </Router>
   );  
-}
+};
 
 export default App;

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Webcam from 'react-webcam';
 import AWS from 'aws-sdk';
-import { Grid, createMuiTheme, TextField, IconButton, Typography } from '@material-ui/core';
+import { Grid, createMuiTheme, TextField, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { PhotoCamera } from '@material-ui/icons';
 import Message from './Message';
+import Fade from '@material-ui/core/Fade';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function Register() {
     const theme = createMuiTheme()
@@ -29,6 +31,7 @@ export default function Register() {
     });
     const [nickname, setNickname] = useState('');
     const [formStatus, setFormStatus] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleNickname = (event) => {        
         setNickname(event.target.value);        
@@ -63,6 +66,7 @@ export default function Register() {
     }
 
     const sendImageToS3 = async (blob) => {
+        setLoading(prevLoading => !prevLoading);
         const bucketName = 'lambda-talks-face';
         let paramsPutObject = {
             Body: blob,
@@ -77,40 +81,43 @@ export default function Register() {
         let arrayWithObjectsInBucket = [];
         try {
             arrayWithObjectsInBucket = await promiseWithObjectsInBucket(paramsListObjects);
+            console.log(arrayWithObjectsInBucket);
         } catch (err) {
             console.log(err);
-        }
+        }        
         if (arrayWithObjectsInBucket && arrayWithObjectsInBucket.length > 0) {
             let element = '';
             for (let index in arrayWithObjectsInBucket) {
-                element = arrayWithObjectsInBucket[index].Key;
-                if (nickname.toLowerCase() === element.split('.')[0].toLowerCase()) {
+                element = arrayWithObjectsInBucket[index].Key;                
+                if (nickname.toLowerCase() === element.split('.')[0].toLowerCase()) {                    
                     handleRepeatedNickname();
+                    setLoading(prevLoading => !prevLoading);
                     break;
                 }
             }
         }
-        if (formStatus === 'repeated nickname') {
+        if (!(formStatus === 'repeated nickname')) {
             s3.putObject(paramsPutObject, (err, data) => {
                 if (err) console.log(err, err.stack);
-                else {
-                    console.log(data)
-                    setFormStatus('success')
+                else {                    
+                    setFormStatus('success');
+                    console.log(setFormStatus);
+                    setLoading(prevLoading => !prevLoading);                
                 };
             });
         } else {
+
             console.log("Nickname já existente");
         }
     }
 
     const webcamRef = React.useRef(null);
 
-    const handleSubmit = (event) => {
-        setFormStatus('')
+    const handleSubmit = (event) => {        
         event.preventDefault();
         const imageSrc = webcamRef.current.getScreenshot();
         let blob = b64ToBlob(imageSrc);
-        sendImageToS3(blob);
+        sendImageToS3(blob);        
     }
 
     return (
@@ -141,15 +148,28 @@ export default function Register() {
                                 <TextField id="standard-basic" label="Nickname" onChange={ handleNickname }/>                        
                             </form>
                         </Grid>
-                        <Grid>
+                        <Grid item>
                             <IconButton onClick={handleSubmit} className={classes.button}>
                                 <PhotoCamera/>
                             </IconButton>
                         </Grid>
                     </Grid>
-                    <Message status={formStatus}/>                    
                 </Grid>
-            </Grid>
+                <Grid item>
+                    <Fade
+                        in={loading}
+                        style={{
+                            transitionDelay: loading ? '800ms' : '0ms',
+                        }}
+                        unmountOnExit
+                    >
+                        <CircularProgress />
+                    </Fade>        
+                </Grid>
+                <Grid>
+                    <Message status={formStatus}/>
+                </Grid>
+            </Grid>            
         </React.Fragment>
     )
 }

@@ -1,23 +1,32 @@
-import React from 'react'
-import { Typography } from '@material-ui/core'
+import React from 'react';
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 
 export default function Message(props) {   
+    const useStyles = makeStyles({
+        messageError: {
+            color: '#BF2222'
+        }, 
+        messageSuccess: {
+            color: '#37A116'
+        }
+    });
+    const classes = useStyles();
 
-    const inputMessage = (status) => {
-        console.log(status)
+    const inputMessage = (status) => {       
         switch(status){
-            case 'repeated nickname':
+            case 'repeated nickname':                
                 return 'Nickname já utilizado!'
-            case 'success':
+            case 'success':                
                 return 'Foto enviada!'
             default:
                 return
         }        
-    }
+    };
 
     return (
         <React.Fragment>
-            <Typography>{inputMessage(props.status)}</Typography>
+            <Typography className={props.status==='success'?classes.messageSuccess:classes.messageError}>{inputMessage(props.status)}</Typography>
         </React.Fragment>
     )
-}
+};

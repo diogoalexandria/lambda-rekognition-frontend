@@ -1,12 +1,11 @@
-import React from 'react'
-import { Grid, Link, AppBar } from '@material-ui/core'
-import { createMuiTheme } from '@material-ui/core/styles'
-import { makeStyles } from '@material-ui/styles'
-import { useHistory } from 'react-router-dom'
-import logo from './../assets/garagemlogo.png'
+import React from 'react';
+import { Grid, Link, AppBar } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import { useHistory } from 'react-router-dom';
+import logo from './../assets/garagemlogo.png';
 export default function Header() {
 
-  const history = useHistory()
+  const history = useHistory();
 
   const useStyles = makeStyles({
     garagemLogo: {
@@ -23,21 +22,21 @@ export default function Header() {
       fontFamily: 'Verdana, sans-serif',
       fontSize: '3vh'
     }
-  })
+  });
 
-  const classes = useStyles()
+  const classes = useStyles();
 
   const handleCadastrarClick = e => {
     history.push('/register')
-  }
+  };
 
   const handleRecognizeClick = e => {
     history.push('/recognition')
-  }
+  };
 
   const handleLogoClick = e => {
     history.push('/')
-  }
+  };
 
   return (
     <React.Fragment>
@@ -60,4 +59,4 @@ export default function Header() {
       </AppBar>
     </React.Fragment>
   )
-}
+};
