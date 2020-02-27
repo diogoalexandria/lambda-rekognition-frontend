@@ -168,7 +168,7 @@ export default function Register() {
                     </Fade>        
                 </Grid>
                 <Grid>
-                    <Message status={formStatus}/>
+                    <Message hiddenStatus={loading} status={formStatus}/>
                 </Grid>
             </Grid>            
         </React.Fragment>

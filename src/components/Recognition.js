@@ -1,13 +1,16 @@
 import React from 'react';
 import Webcam from 'react-webcam'
 import { Rekognition } from 'aws-sdk';
-import { IconButton, Grid, createMuiTheme, Typography } from '@material-ui/core'
-import { PhotoCamera } from '@material-ui/icons'
-import { makeStyles } from '@material-ui/styles'
+import { IconButton, Grid, createMuiTheme, Typography } from '@material-ui/core';
+import { PhotoCamera } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
+import Fade from '@material-ui/core/Fade';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function Recognition() {
 
-    const [nickname, setNickname] = React.useState('')
+    const [message, setMessage] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
     const awsCredentials = {
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY,
@@ -32,21 +35,20 @@ export default function Recognition() {
     })
 
     const rekognizeImage = params => {
-        rekognition.searchFacesByImage(params, (err, data) => {
-            if (err) console.log(err, err.stack)
-            else setNickname(data.FaceMatches[0].Face.ExternalImageId)
+        return new Promise((resolve, reject) => {
+            rekognition.searchFacesByImage(params, (err, data) => {
+                if (err) {
+                    console.log(err, err.stack)
+                    setMessage('ops')
+                    return reject(err);
+                }
+                else {
+                    setMessage(data.FaceMatches[0] ? `Olá ${data.FaceMatches[0].Face.ExternalImageId}!` : 'Nenhuma face foi reconhecida');
+                    return resolve("Ok!");
+                }
+            })
+
         })
-    }
-
-    const b64ToBlob = (base64) => {
-        let byteString = atob(base64.split(',')[1]);
-        let arrayBuffer = new ArrayBuffer(byteString.length);
-        let uInt8Array = new Uint8Array(arrayBuffer);
-
-        for (let i = 0; i < byteString.length; i++) {
-            uInt8Array[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([arrayBuffer], { type: 'image/jpeg' })
     }
 
 
@@ -59,10 +61,11 @@ export default function Recognition() {
             ua[i] = binaryImg.charCodeAt(i);
         }
         return ab
-
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
+        setLoading(true);
+        console.log("Loading", loading)
         let imgSrc = webcamRef.current.getScreenshot()
         let img = getBinary(imgSrc)
         console.log(img)
@@ -73,7 +76,8 @@ export default function Recognition() {
             },
             MaxFaces: 1
         }
-        rekognizeImage(params)
+        await rekognizeImage(params)
+        setLoading(false);
     }
 
     const classes = useStyles()
@@ -96,12 +100,23 @@ export default function Recognition() {
                     />
                 </Grid>
                 <Grid item>
-                    <IconButton onClick={handleSubmit} className={classes.button}>
+                    <IconButton hidden={loading} disabled={loading} onClick={handleSubmit} className={classes.button}>
                         <PhotoCamera />
                     </IconButton>
                 </Grid>
                 <Grid item>
-                    <Typography hidden={!nickname}>Olá, {nickname}!</Typography>
+                    <Fade
+                        in={loading}
+                        style={{
+                            transitionDelay: loading ? '800ms' : '0ms',
+                        }}
+                        unmountOnExit
+                    >
+                        <CircularProgress />
+                    </Fade>
+                </Grid>
+                <Grid item>
+                    <Typography hidden={loading}>{message}</Typography>
                 </Grid>
             </Grid>
         </React.Fragment>

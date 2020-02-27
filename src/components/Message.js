@@ -26,7 +26,7 @@ export default function Message(props) {
 
     return (
         <React.Fragment>
-            <Typography className={props.status==='success'?classes.messageSuccess:classes.messageError}>{inputMessage(props.status)}</Typography>
+            <Typography hidden={props.hiddenStatus} className={props.status==='success'?classes.messageSuccess:classes.messageError}>{inputMessage(props.status)}</Typography>
         </React.Fragment>
     )
 };
