@@ -15,7 +15,8 @@ export default function Register() {
             margin: theme.spacing(5)
         },
         button: {
-            marginTop: '3.5vh',            
+            marginLeft: '1vw',
+            marginTop: '2.7vh',            
         },
         webcam: {
             position: 'static',

@@ -8,12 +8,12 @@ import { makeStyles } from '@material-ui/styles'
 export default function Recognition(){
     const awsCredentials={       
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
-        secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
+        secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY,
+        region: 'us-east-1'
     }
     const rekognition = new Rekognition(awsCredentials)
     
     const webcamRef = React.useRef(null)
-    
     const theme = createMuiTheme()
     const useStyles = makeStyles({
         title: {
@@ -30,17 +30,35 @@ export default function Recognition(){
     })
     
     const rekognizeImage = params => {
-        return rekognition.searchFacesByImage(params)
+        rekognition.searchFacesByImage(params, (err,data)=>{
+            if(err) console.log(err,err.stack)
+            else console.log(data)
+        })
+    }
+
+    const b64ToBlob = (base64) => {
+        let byteString = atob(base64.split(',')[1]);
+        let arrayBuffer = new ArrayBuffer(byteString.length);
+        let uInt8Array = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < byteString.length; i++) {
+            uInt8Array[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([arrayBuffer], { type: 'image/jpeg' })
     }
 
     const handleSubmit = e => {
         let imgSrc = webcamRef.current.getScreenshot()
+        let img = b64ToBlob(imgSrc)
+        console.log(Buffer.from(imgSrc))
         var params = {
             CollectionId: "lambda-talks",
-            Image: imgSrc,
+            Image: {
+                Bytes: img
+            },
             MaxFaces: 1
         }
-        console.log(rekognizeImage(params))
+        rekognizeImage(params)
     }
 
     const classes = useStyles()
