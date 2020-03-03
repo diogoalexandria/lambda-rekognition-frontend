@@ -22,11 +22,19 @@ export default function Recognition() {
             margin: theme.spacing(5)
         },
         button: {
-            margin: theme.spacing(3)
+            margin: theme.spacing(3),
+            width: '5vh',
+            height: '5vh',
+            padding: 0
+        },
+        icon: {
+            width: '5vh',
+            height: '5vh'
         },
         webcam: {
             position: 'static',
-            marginTop: '15vh',
+            width: '90vw',
+            height: '60vh'
         }
 
     })
@@ -37,18 +45,6 @@ export default function Recognition() {
             else setNickname(data.FaceMatches[0].Face.ExternalImageId)
         })
     }
-
-    const b64ToBlob = (base64) => {
-        let byteString = atob(base64.split(',')[1]);
-        let arrayBuffer = new ArrayBuffer(byteString.length);
-        let uInt8Array = new Uint8Array(arrayBuffer);
-
-        for (let i = 0; i < byteString.length; i++) {
-            uInt8Array[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([arrayBuffer], { type: 'image/jpeg' })
-    }
-
 
     const getBinary = (b64img) => {
         let binaryImg = atob(b64img.split(',')[1]);
@@ -77,6 +73,11 @@ export default function Recognition() {
     }
 
     const classes = useStyles()
+
+    const videoConstraints = {
+        facingMode: 'user'
+    }
+
     return (
         <React.Fragment>
             <Grid container
@@ -88,16 +89,15 @@ export default function Recognition() {
                 <Grid item>
                     <Webcam
                         audio={false}
-                        width={theme.spacing(65)}
-                        height={theme.spacing(43)}
                         ref={webcamRef}
                         screenshotFormat='image/jpeg'
                         className={classes.webcam}
+                        videoConstraints={videoConstraints}
                     />
                 </Grid>
                 <Grid item>
                     <IconButton onClick={handleSubmit} className={classes.button}>
-                        <PhotoCamera />
+                        <PhotoCamera className={classes.icon}/>
                     </IconButton>
                 </Grid>
                 <Grid item>
