@@ -134,15 +134,15 @@ export default function Register() {
         axios({
             method: 'post',
             url: API_URL_BASE + '/index',
-            data:{
+            data: {
                 "nickname": nickname,
                 "data": imageSrc
             },
-            headers:{
+            headers: {
                 "Content-Type": "application/json",
                 "X-Api-Key": process.env.REACT_APP_API_KEY
             }
-         })
+        })
             .then(res => {
                 //success
                 console.log(res)
@@ -157,57 +157,57 @@ export default function Register() {
             })
     }
 
-return (
-    <React.Fragment>
-        <Grid container
-            direction="column"
-            justify="center"
-            alignItems="center"
-        >
-            <Grid item>
-                <Webcam
-                    audio={false}
-                    width={480}
-                    height={400}
-                    ref={webcamRef}
-                    screenshotFormat='image/jpeg'
-                    className={classes.webcam}
-                    videoConstraints={videoConstraints}
-                />
-            </Grid>
-            <Grid item>
-                <Grid container
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                >
-                    <Grid item>
-                        <form className={classes.root} noValidate autoComplete="off">
-                            <TextField id="standard-basic" label="Nickname" onChange={handleNickname} />
-                        </form>
+    return (
+        <React.Fragment>
+            <Grid container
+                direction="column"
+                justify="center"
+                alignItems="center"
+            >
+                <Grid item>
+                    <Webcam
+                        audio={false}
+                        width={480}
+                        height={400}
+                        ref={webcamRef}
+                        screenshotFormat='image/jpeg'
+                        className={classes.webcam}
+                        videoConstraints={videoConstraints}
+                    />
+                </Grid>
+                <Grid item>
+                    <Grid container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                    >
+                        <Grid item>
+                            <form className={classes.root} noValidate autoComplete="off">
+                                <TextField id="standard-basic" label="Nickname" onChange={handleNickname} />
+                            </form>
+                        </Grid>
+                        <Grid item>
+                            <IconButton onClick={handleSubmit} className={classes.button}>
+                                <PhotoCamera />
+                            </IconButton>
+                        </Grid>
                     </Grid>
                     <Grid item>
-                        <IconButton onClick={handleSubmit} className={classes.button}>
-                            <PhotoCamera />
-                        </IconButton>
+                        <Fade
+                            in={loading}
+                            style={{
+                                transitionDelay: loading ? '800ms' : '0ms',
+                            }}
+                            unmountOnExit
+                        >
+                            <CircularProgress />
+                        </Fade>
+                    </Grid>
+                    <Grid item>
+                        <Message hiddenStatus={loading} status={formStatus} />
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item>
-                <Fade
-                    in={loading}
-                    style={{
-                        transitionDelay: loading ? '800ms' : '0ms',
-                    }}
-                    unmountOnExit
-                >
-                    <CircularProgress />
-                </Fade>
-            </Grid>
-            <Grid>
-                <Message status={formStatus} />
-            </Grid>
-        </Grid>
-    </React.Fragment>
-)
+        </React.Fragment>
+    )
 }
