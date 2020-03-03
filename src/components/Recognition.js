@@ -6,10 +6,11 @@ import { PhotoCamera } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Message from './Message'
 
 export default function Recognition() {
-
-    const [message, setMessage] = React.useState('');
+    const [nickname, setNickname] = React.useState('');
+    const [status, setStatus] = React.useState('');    
     const [loading, setLoading] = React.useState(false);
     const awsCredentials = {
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
@@ -47,11 +48,12 @@ export default function Recognition() {
             rekognition.searchFacesByImage(params, (err, data) => {
                 if (err) {
                     console.log(err, err.stack)
-                    setMessage('ops')
+                    setStatus('error')
                     return reject(err);
                 }
-                else {
-                    setMessage(data.FaceMatches[0] ? `Olá ${data.FaceMatches[0].Face.ExternalImageId}!` : 'Nenhuma face foi reconhecida');
+                else {                   
+                    setStatus(data.FaceMatches[0] ? 'success' : 'no registered face detected');                   
+                    setNickname(data.FaceMatches[0] ? data.FaceMatches[0].Face.ExternalImageId : '')
                     return resolve("Ok!");
                 }
             })
@@ -61,8 +63,11 @@ export default function Recognition() {
         })
     }
 
+<<<<<<< Updated upstream
 
 >>>>>>> 6f96ce0e62b10adcd702692c6b8f7be505d91432
+=======
+>>>>>>> Stashed changes
     const getBinary = (b64img) => {
         let binaryImg = atob(b64img.split(',')[1]);
         let length = binaryImg.length
@@ -136,7 +141,8 @@ export default function Recognition() {
                     </Fade>
                 </Grid>
                 <Grid item>
-                    <Typography hidden={loading}>{message}</Typography>
+                    <Message hiddenStatus={loading} status={status} nickname={nickname}/>
+                    {/* <Typography hidden={loading}>{message}</Typography> */}
                 </Grid>
             </Grid>
         </React.Fragment>

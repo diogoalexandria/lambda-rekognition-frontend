@@ -18,7 +18,11 @@ export default function Message(props) {
             case 'repeated nickname':                
                 return 'Nickname já utilizado!'
             case 'success':                
-                return 'Foto enviada!'
+                return props.nickname? `Olá ${props.nickname}`: `Sucesso!`
+            case 'no registered face detected':
+                return 'Nenhum rosto foi encontrado!'
+            case 'error':
+                return 'Ops! Algo deu errado...'                            
             default:
                 return
         }        
