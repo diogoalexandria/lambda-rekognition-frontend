@@ -44,30 +44,21 @@ export default function Recognition() {
     })
 
     const rekognizeImage = params => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {            
             rekognition.searchFacesByImage(params, (err, data) => {
                 if (err) {
                     console.log(err, err.stack)
                     setStatus('error')
                     return reject(err);
                 }
-                else {                   
+                else {                                       
                     setStatus(data.FaceMatches[0] ? 'success' : 'no registered face detected');                   
                     setNickname(data.FaceMatches[0] ? data.FaceMatches[0].Face.ExternalImageId : '')
                     return resolve("Ok!");
                 }
             })
-
-<<<<<<< HEAD
-=======
         })
     }
-
-<<<<<<< Updated upstream
-
->>>>>>> 6f96ce0e62b10adcd702692c6b8f7be505d91432
-=======
->>>>>>> Stashed changes
     const getBinary = (b64img) => {
         let binaryImg = atob(b64img.split(',')[1]);
         let length = binaryImg.length
@@ -80,11 +71,9 @@ export default function Recognition() {
     }
 
     const handleSubmit = async e => {
-        setLoading(true);
-        console.log("Loading", loading)
+        setLoading(true);        
         let imgSrc = webcamRef.current.getScreenshot()
-        let img = getBinary(imgSrc)
-        console.log(img)
+        let img = getBinary(imgSrc)        
         var params = {
             CollectionId: "lambda-talks",
             Image: {
@@ -120,13 +109,8 @@ export default function Recognition() {
                     />
                 </Grid>
                 <Grid item>
-<<<<<<< HEAD
                     <IconButton onClick={handleSubmit} className={classes.button}>
                         <PhotoCamera className={classes.icon}/>
-=======
-                    <IconButton hidden={loading} disabled={loading} onClick={handleSubmit} className={classes.button}>
-                        <PhotoCamera />
->>>>>>> 6f96ce0e62b10adcd702692c6b8f7be505d91432
                     </IconButton>
                 </Grid>
                 <Grid item>

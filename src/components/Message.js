@@ -15,8 +15,8 @@ export default function Message(props) {
 
     const inputMessage = (status) => {       
         switch(status){
-            case 'repeated nickname':                
-                return 'Nickname já utilizado!'
+            case 'face already registered':                
+                return `Fala ${props.nickname}, sua face já foi cadastrada`
             case 'success':                
                 return props.nickname? `Olá ${props.nickname}`: `Sucesso!`
             case 'no registered face detected':

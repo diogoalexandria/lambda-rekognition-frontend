@@ -38,87 +38,13 @@ export default function Register() {
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
     });
     const [nickname, setNickname] = useState('');
+    const [nicknameRegistered, setNicknameRegistered] = useState('');
     const [formStatus, setFormStatus] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [imgB64, setImgB64] = useState('')
 
     const handleNickname = (event) => {
         setNickname(event.target.value);
-    }
-
-    // function handleRepeatedNickname() {
-    //     setFormStatus('repeated nickname');
-    // }
-
-    // const promiseWithObjectsInBucket = (params) => {
-    //     return new Promise((resolve, reject) => {
-    //         s3.listObjects(params, (err, data) => {
-    //             if (err) {
-    //                 console.log(err, err.stack);
-    //                 return reject(err);
-    //             }
-    //             let array = data.Contents
-    //             return resolve(array)
-    //         });
-    //     })
-    // }
-
-    // const b64ToBlob = (base64) => {
-    //     let byteString = atob(base64.split(',')[1]);
-    //     let arrayBuffer = new ArrayBuffer(byteString.length);
-    //     let uInt8Array = new Uint8Array(arrayBuffer);
-
-    //     for (let i = 0; i < byteString.length; i++) {
-    //         uInt8Array[i] = byteString.charCodeAt(i);
-    //     }
-    //     return new Blob([arrayBuffer], { type: 'image/jpeg' })
-    // }
-
-    // const sendImageToS3 = async (blob) => {
-    //     setLoading(prevLoading => !prevLoading);
-    //     const bucketName = 'lambda-talks-face';
-    //     let paramsPutObject = {
-    //         Body: blob,
-    //         Bucket: bucketName,
-    //         Key: `${nickname}.jpeg`
-    //     };
-
-    //     let paramsListObjects = {
-    //         Bucket: bucketName
-    //     };
-
-    //     let arrayWithObjectsInBucket = [];
-    //     try {
-    //         arrayWithObjectsInBucket = await promiseWithObjectsInBucket(paramsListObjects);
-    //         console.log(arrayWithObjectsInBucket);
-    //     } catch (err) {
-    //         console.log(err);
-    //     }        
-    //     if (arrayWithObjectsInBucket && arrayWithObjectsInBucket.length > 0) {
-    //         let element = '';
-    //         for (let index in arrayWithObjectsInBucket) {
-    //             element = arrayWithObjectsInBucket[index].Key;                
-    //             if (nickname.toLowerCase() === element.split('.')[0].toLowerCase()) {                    
-    //                 handleRepeatedNickname();
-    //                 setLoading(prevLoading => !prevLoading);
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     if (!(formStatus === 'repeated nickname')) {
-    //         s3.putObject(paramsPutObject, (err, data) => {
-    //             if (err) console.log(err, err.stack);
-    //             else {                    
-    //                 setFormStatus('success');
-    //                 console.log(setFormStatus);
-    //                 setLoading(prevLoading => !prevLoading);                
-    //             };
-    //         });
-    //     } else {
-
-    //         console.log("Nickname já existente");
-    //     }
-    // }
+    }   
 
     const videoConstraints = {
         facingMode: 'user'
@@ -128,9 +54,9 @@ export default function Register() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setLoading(prevLoading => !prevLoading);
         const imageSrc = webcamRef.current.getScreenshot();
-        const API_URL_BASE = process.env.REACT_APP_API_URL_BASE
-        console.log('Api URL', API_URL_BASE)
+        const API_URL_BASE = process.env.REACT_APP_API_URL_BASE        
         axios({
             method: 'post',
             url: API_URL_BASE + '/index',
@@ -143,18 +69,25 @@ export default function Register() {
                 "X-Api-Key": process.env.REACT_APP_API_KEY
             }
         })
-            .then(res => {
-                //success
-                console.log(res)
+            .then(res => {               
+                if(res.data.matches) {
+                    setFormStatus('face already registered');
+                    console.log(res.data)
+                    setNicknameRegistered(res.data.matches);
+                } else {
+                    setFormStatus('success');
+                }                               
             })
-            .catch(res => {
-                //error
-                console.log(res)
+            .catch(res => {                
+                setFormStatus('error');
+                console.log(res);                
             })
             .then(res => {
                 //default callback
-                console.log(res)
+                console.log(res)                
+                setLoading(false);                               
             })
+            
     }
 
     return (
@@ -204,7 +137,7 @@ export default function Register() {
                         </Fade>
                     </Grid>
                     <Grid item>
-                        <Message hiddenStatus={loading} status={formStatus} />
+                        <Message hiddenStatus={loading} nickname={nicknameRegistered} status={formStatus} />
                     </Grid>
                 </Grid>
             </Grid>
