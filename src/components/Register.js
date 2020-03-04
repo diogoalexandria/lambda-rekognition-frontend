@@ -71,20 +71,16 @@ export default function Register() {
         })
             .then(res => {               
                 if(res.data.matches) {
-                    setFormStatus('face already registered');
-                    console.log(res.data)
+                    setFormStatus('face already registered');                    
                     setNicknameRegistered(res.data.matches);
                 } else {
                     setFormStatus('success');
                 }                               
             })
             .catch(res => {                
-                setFormStatus('error');
-                console.log(res);                
+                setFormStatus('error');                                
             })
-            .then(res => {
-                //default callback
-                console.log(res)                
+            .then(res => {                               
                 setLoading(false);                               
             })
             
