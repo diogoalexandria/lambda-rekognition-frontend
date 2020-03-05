@@ -1,8 +1,8 @@
 import React from 'react';
 import Webcam from 'react-webcam'
 import { Rekognition } from 'aws-sdk';
-import { IconButton, Grid, createMuiTheme, Typography } from '@material-ui/core';
-import { PhotoCamera } from '@material-ui/icons';
+import { IconButton, Grid, createMuiTheme } from '@material-ui/core';
+import { PhotoCamera, FlipCameraIos } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -10,8 +10,9 @@ import Message from './Message'
 
 export default function Recognition() {
     const [nickname, setNickname] = React.useState('');
-    const [status, setStatus] = React.useState('');    
+    const [status, setStatus] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+    const [cameraMode, setCameraMode] = React.useState('user')
     const awsCredentials = {
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY,
@@ -45,15 +46,15 @@ export default function Recognition() {
     })
 
     const rekognizeImage = params => {
-        return new Promise((resolve, reject) => {            
+        return new Promise((resolve, reject) => {
             rekognition.searchFacesByImage(params, (err, data) => {
                 if (err) {
                     console.log(err, err.stack)
                     setStatus('error')
                     return reject(err);
                 }
-                else {                                       
-                    setStatus(data.FaceMatches[0] ? 'success' : 'no registered face detected');                   
+                else {
+                    setStatus(data.FaceMatches[0] ? 'success' : 'no registered face detected');
                     setNickname(data.FaceMatches[0] ? data.FaceMatches[0].Face.ExternalImageId : '')
                     return resolve("Ok!");
                 }
@@ -71,10 +72,14 @@ export default function Recognition() {
         return ab
     }
 
+    const handleFacingMode = (e) => {
+        setCameraMode(cameraMode == 'user' ? 'enviroment' : 'user')
+    }
+
     const handleSubmit = async e => {
-        setLoading(true);        
+        setLoading(true);
         let imgSrc = webcamRef.current.getScreenshot()
-        let img = getBinary(imgSrc)        
+        let img = getBinary(imgSrc)
         var params = {
             CollectionId: "lambda-talks",
             Image: {
@@ -110,15 +115,20 @@ export default function Recognition() {
                     />
                 </Grid>
                 <Grid item>
+                    <IconButton onClick={handleFacingMode}>
+                        <FlipCameraIos />
+                    </IconButton>
+                </Grid>
+                <Grid item>
                     <IconButton onClick={handleSubmit} className={classes.button}>
-                        <PhotoCamera className={classes.icon}/>
+                        <PhotoCamera className={classes.icon} />
                     </IconButton>
                 </Grid>
                 <Grid item>
                     <Fade
                         in={loading}
                         style={{
-                            transitionDelay: loading ? '800ms' : '0ms',
+                            transitionDelay: loading ? '400ms' : '0ms',
                         }}
                         unmountOnExit
                     >
@@ -126,7 +136,7 @@ export default function Recognition() {
                     </Fade>
                 </Grid>
                 <Grid item>
-                    <Message hiddenStatus={loading} status={status} nickname={nickname}/>
+                    <Message hiddenStatus={loading} status={status} nickname={nickname} />
                     {/* <Typography hidden={loading}>{message}</Typography> */}
                 </Grid>
             </Grid>

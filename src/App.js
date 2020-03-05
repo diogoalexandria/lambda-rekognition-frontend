@@ -14,10 +14,10 @@ function App() {
 
   const useStyles = makeStyles({
     header:{
-      marginBottom: '15vh'
+      marginBottom: '12vh'
     },
     footer: {
-      marginTop: '8vh'
+      marginTop: '10vh'
     }
   })
 

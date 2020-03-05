@@ -7,14 +7,14 @@ export default function Footer(props){
     const useStyles = makeStyles({
         footer:{
             backgroundColor: '#222222',
-            position: 'fixed',
             top: 'auto',
             bottom: 0,
             padding: '1vh',
+            height: '8vh'
         },
         garagemLogo: {
-            width: '30vh',
-            height: '8vh',
+            width: '22vh',
+            height: '6vh',
         },
 
     })

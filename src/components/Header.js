@@ -9,8 +9,8 @@ export default function Header() {
 
   const useStyles = makeStyles({
     garagemLogo: {
-      width: '8vh',
-      height: '10vh',
+      width: '6vh',
+      height: '8vh',
     },
     header: {
       backgroundColor: '#222222',

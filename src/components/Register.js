@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import Webcam from 'react-webcam';
-
 import { Grid, createMuiTheme, TextField, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { PhotoCamera } from '@material-ui/icons';
+import { PhotoCamera, FlipCameraIos } from '@material-ui/icons';
 import Message from './Message';
 import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -13,12 +12,9 @@ import axios from 'axios'
 export default function Register() {
     const theme = createMuiTheme()
     const useStyles = makeStyles({
-        title: {
-            margin: theme.spacing(5)
-        },
+
         button: {
             marginLeft: '1vw',
-            marginTop: '2.7vh'
 
         },
         icon: {
@@ -29,10 +25,13 @@ export default function Register() {
             position: 'static',
             width: '80vw',
             height: '50vh',
-            marginBottom: '2vh'
+            marginBottom: '1vh'
         },
         loading: {
             left: '50vw'
+        },
+        input: {
+            marginBottom: '1vh'
         }
 
     });
@@ -42,19 +41,26 @@ export default function Register() {
     const [nicknameRegistered, setNicknameRegistered] = useState('');
     const [formStatus, setFormStatus] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [cameraMode,setCameraMode] = useState('user')
 
     const handleNickname = (event) => {
-        setNickname(event.target.value);
+        setNickname(event.target.value.replace(' ', '_'));
     }
 
     const videoConstraints = {
-        facingMode: 'user'
+        facingMode: cameraMode
+    }
+
+
+    const handleFacingMode = (e) =>{
+        setCameraMode(cameraMode == 'user' ? 'enviroment' : 'user')
     }
 
     const webcamRef = React.useRef(null);
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log(nickname)
         setLoading(prevLoading => !prevLoading);
         const imageSrc = webcamRef.current.getScreenshot();
         const API_URL_BASE = process.env.REACT_APP_API_URL_BASE
@@ -106,11 +112,17 @@ export default function Register() {
                     />
                 </Grid>
                 <Grid item>
+                    <IconButton onClick={handleFacingMode}>
+                        <FlipCameraIos />
+                    </IconButton>
+                </Grid>
+                <Grid item>
                     <Grid container
                         direction="column"
                         justify="center"
                         alignItems="center">
                         <Grid item>
+
 
                             <Grid container
                                 direction="row"
@@ -119,7 +131,7 @@ export default function Register() {
                             >
                                 <Grid item>
                                     <form className={classes.root} noValidate autoComplete="off">
-                                        <TextField id="standard-basic" label="Nickname" onChange={handleNickname} />
+                                        <TextField id="standard-basic" label="Nickname" onChange={handleNickname} className={classes.input}/>
                                     </form>
                                 </Grid>
                                 <Grid item>
@@ -127,6 +139,7 @@ export default function Register() {
                                         <PhotoCamera />
                                     </IconButton>
                                 </Grid>
+
                             </Grid>
                         </Grid>
                         <Grid item>
