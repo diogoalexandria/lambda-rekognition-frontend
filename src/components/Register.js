@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Webcam from 'react-webcam';
-import AWS from 'aws-sdk';
+
 import { Grid, createMuiTheme, TextField, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { PhotoCamera } from '@material-ui/icons';
@@ -18,25 +18,26 @@ export default function Register() {
         },
         button: {
             marginLeft: '1vw',
-            marginTop: '2.7vh',
-            width: '5vh',
-            height: '5vh'
+            marginTop: '2.7vh'
+
         },
         icon: {
-            width: '5vh',
-            height: '5vh',
+            width: '3vh',
+            height: '3vh',
         },
         webcam: {
             position: 'static',
+            width: '80vw',
+            height: '50vh',
+            marginBottom: '2vh'
+        },
+        loading: {
+            left: '50vw'
         }
 
     });
     const classes = useStyles();
 
-    const s3 = new AWS.S3({
-        accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
-        secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY
-    });
     const [nickname, setNickname] = useState('');
     const [nicknameRegistered, setNicknameRegistered] = useState('');
     const [formStatus, setFormStatus] = useState(null);
@@ -44,7 +45,7 @@ export default function Register() {
 
     const handleNickname = (event) => {
         setNickname(event.target.value);
-    }   
+    }
 
     const videoConstraints = {
         facingMode: 'user'
@@ -56,7 +57,7 @@ export default function Register() {
         event.preventDefault();
         setLoading(prevLoading => !prevLoading);
         const imageSrc = webcamRef.current.getScreenshot();
-        const API_URL_BASE = process.env.REACT_APP_API_URL_BASE        
+        const API_URL_BASE = process.env.REACT_APP_API_URL_BASE
         axios({
             method: 'post',
             url: API_URL_BASE + '/index',
@@ -69,21 +70,21 @@ export default function Register() {
                 "X-Api-Key": process.env.REACT_APP_API_KEY
             }
         })
-            .then(res => {               
-                if(res.data.matches) {
-                    setFormStatus('face already registered');                    
+            .then(res => {
+                if (res.data.matches) {
+                    setFormStatus('face already registered');
                     setNicknameRegistered(res.data.matches);
                 } else {
                     setFormStatus('success');
-                }                               
+                }
             })
-            .catch(res => {                
-                setFormStatus('error');                                
+            .catch(res => {
+                setFormStatus('error');
             })
-            .then(res => {                               
-                setLoading(false);                               
+            .then(res => {
+                setLoading(false);
             })
-            
+
     }
 
     return (
@@ -106,34 +107,44 @@ export default function Register() {
                 </Grid>
                 <Grid item>
                     <Grid container
-                        direction="row"
+                        direction="column"
                         justify="center"
-                        alignItems="center"
-                    >
+                        alignItems="center">
                         <Grid item>
-                            <form className={classes.root} noValidate autoComplete="off">
-                                <TextField id="standard-basic" label="Nickname" onChange={handleNickname} />
-                            </form>
+
+                            <Grid container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                            >
+                                <Grid item>
+                                    <form className={classes.root} noValidate autoComplete="off">
+                                        <TextField id="standard-basic" label="Nickname" onChange={handleNickname} />
+                                    </form>
+                                </Grid>
+                                <Grid item>
+                                    <IconButton onClick={handleSubmit} className={classes.button}>
+                                        <PhotoCamera />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item>
-                            <IconButton onClick={handleSubmit} className={classes.button}>
-                                <PhotoCamera />
-                            </IconButton>
+                            <Fade
+                                in={loading}
+                                style={{
+                                    transitionDelay: loading ? '400ms' : '0ms',
+                                }}
+                                unmountOnExit
+                            >
+                                <CircularProgress className={classes.loading} />
+                            </Fade>
                         </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Fade
-                            in={loading}
-                            style={{
-                                transitionDelay: loading ? '800ms' : '0ms',
-                            }}
-                            unmountOnExit
-                        >
-                            <CircularProgress />
-                        </Fade>
-                    </Grid>
-                    <Grid item>
-                        <Message hiddenStatus={loading} nickname={nicknameRegistered} status={formStatus} />
+
+                        <Grid item>
+                            <Message hiddenStatus={loading} nickname={nicknameRegistered} status={formStatus} />
+                        </Grid>
+
                     </Grid>
                 </Grid>
             </Grid>

@@ -27,18 +27,19 @@ export default function Recognition() {
         },
         button: {
             margin: theme.spacing(3),
-            width: '5vh',
-            height: '5vh',
+            width: '4vh',
+            height: '4vh',
             padding: 0
         },
         icon: {
-            width: '5vh',
-            height: '5vh'
+            width: '4vh',
+            height: '4vh'
         },
         webcam: {
             position: 'static',
-            width: '90vw',
-            height: '60vh'
+            width: '80vw',
+            height: '50vh',
+            marginBottom: '2vh'
         }
 
     })
