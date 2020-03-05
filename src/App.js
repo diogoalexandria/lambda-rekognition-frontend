@@ -15,6 +15,9 @@ function App() {
   const useStyles = makeStyles({
     header:{
       marginBottom: '15vh'
+    },
+    footer: {
+      marginTop: '8vh'
     }
   })
 
@@ -30,7 +33,7 @@ function App() {
           <Route path="/register" component={Register}/>
           <Route path="/recognition" component={Recognition}/>          
         </Switch>
-        <Footer/>
+        <Footer className={classes.footer}/>
       </div>
     </Router>
   );  
