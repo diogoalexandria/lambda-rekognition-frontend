@@ -12,7 +12,6 @@ export default function Recognition() {
     const [nickname, setNickname] = React.useState('');
     const [status, setStatus] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-    const [cameraMode, setCameraMode] = React.useState('user')
     const awsCredentials = {
         accessKeyId: process.env.REACT_APP_AWS_ACESS_KEY_ID,
         secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACESS_KEY,
@@ -72,9 +71,6 @@ export default function Recognition() {
         return ab
     }
 
-    const handleFacingMode = (e) => {
-        setCameraMode(cameraMode == 'user' ? 'enviroment' : 'user')
-    }
 
     const handleSubmit = async e => {
         setLoading(true);
@@ -87,7 +83,11 @@ export default function Recognition() {
             },
             MaxFaces: 1
         }
-        await rekognizeImage(params)
+        try{
+            await rekognizeImage(params)
+        } catch(e){
+            console.error(e)
+        }
         setLoading(false);
     }
 
@@ -115,12 +115,7 @@ export default function Recognition() {
                     />
                 </Grid>
                 <Grid item>
-                    <IconButton onClick={handleFacingMode}>
-                        <FlipCameraIos />
-                    </IconButton>
-                </Grid>
-                <Grid item>
-                    <IconButton onClick={handleSubmit} className={classes.button}>
+                    <IconButton onClick={handleSubmit} className={classes.button} disabled={loading}>
                         <PhotoCamera className={classes.icon} />
                     </IconButton>
                 </Grid>

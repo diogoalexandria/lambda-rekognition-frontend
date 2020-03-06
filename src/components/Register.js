@@ -41,20 +41,16 @@ export default function Register() {
     const [nicknameRegistered, setNicknameRegistered] = useState('');
     const [formStatus, setFormStatus] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [cameraMode,setCameraMode] = useState('user')
+
 
     const handleNickname = (event) => {
-        setNickname(event.target.value.replace(' ', '_'));
+        setNickname(event.target.value.replace(' ', ''));
     }
 
     const videoConstraints = {
-        facingMode: cameraMode
+        facingMode: 'user'
     }
 
-
-    const handleFacingMode = (e) =>{
-        setCameraMode(cameraMode == 'user' ? 'enviroment' : 'user')
-    }
 
     const webcamRef = React.useRef(null);
 
@@ -77,10 +73,14 @@ export default function Register() {
             }
         })
             .then(res => {
+                console.log(res.data)
                 if (res.data.matches) {
                     setFormStatus('face already registered');
                     setNicknameRegistered(res.data.matches);
-                } else {
+                } else if(res.data.errorMessage){
+                    setFormStatus('error')
+                } else{
+                    
                     setFormStatus('success');
                 }
             })
@@ -112,11 +112,6 @@ export default function Register() {
                     />
                 </Grid>
                 <Grid item>
-                    <IconButton onClick={handleFacingMode}>
-                        <FlipCameraIos />
-                    </IconButton>
-                </Grid>
-                <Grid item>
                     <Grid container
                         direction="column"
                         justify="center"
@@ -131,11 +126,11 @@ export default function Register() {
                             >
                                 <Grid item>
                                     <form className={classes.root} noValidate autoComplete="off">
-                                        <TextField id="standard-basic" label="Nickname" onChange={handleNickname} className={classes.input}/>
+                                        <TextField id="standard-basic" label="Nickname" onChange={handleNickname} className={classes.input} value={nickname}/>
                                     </form>
                                 </Grid>
                                 <Grid item>
-                                    <IconButton onClick={handleSubmit} className={classes.button}>
+                                    <IconButton onClick={handleSubmit} className={classes.button} disabled={loading || !nickname}>
                                         <PhotoCamera />
                                     </IconButton>
                                 </Grid>

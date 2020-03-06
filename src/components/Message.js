@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 
+
 export default function Message(props) {
     const useStyles = makeStyles({
         messageError: {
@@ -28,14 +29,14 @@ export default function Message(props) {
         let msg = msgArray[Math.floor(Math.random() * Math.floor(msgArray.length))]
         return msg
     }
-    const nickname = props.nickname.replace('_', ' ')
+
 
     const inputMessage = (status) => {
         switch (status) {
             case 'face already registered':
-                return `Fala ${nickname}, sua face já foi cadastrada`
+                return `Fala ${props.nickname}, sua face já foi cadastrada`
             case 'success':
-                return nickname ? getMsg(nickname) : `Sucesso!`
+                return props.nickname ? getMsg(props.nickname) : `Sucesso!`
             case 'no registered face detected':
                 return 'Nenhum rosto foi encontrado!'
             case 'error':
